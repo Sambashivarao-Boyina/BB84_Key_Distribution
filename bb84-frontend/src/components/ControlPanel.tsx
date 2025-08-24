@@ -118,8 +118,7 @@ export const ControlPanel = ({
                 id="qubit-count"
                 type="number"
                 min={4}
-                max={16}
-                step={4}
+                max={60}
                 value={state.totalRounds}
                 onChange={(e) => onQubitCountChange(Number(e.target.value))}
                 disabled={state.step !== "idle"}
