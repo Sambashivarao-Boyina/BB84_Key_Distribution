@@ -1,0 +1,281 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* BB84 Quantum Simulator Design System - Space/Quantum Theme */
+
+@layer base {
+  :root {
+    /* Light Theme - Clean Professional */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    /* Subtle Teal Primary */
+    --primary: 184 65% 55%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 184 75% 65%;
+
+    /* Alice's Soft Blue */
+    --alice: 217 85% 65%;
+    --alice-foreground: 0 0% 98%;
+
+    /* Bob's Soft Emerald */
+    --bob: 158 65% 50%;
+    --bob-foreground: 0 0% 98%;
+
+    /* Eve's Soft Warning */
+    --eve: 0 65% 60%;
+    --eve-foreground: 0 0% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 84% 4.9%;
+
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 84% 4.9%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 184 65% 55%;
+
+    --radius: 0.75rem;
+
+    /* Light Quantum Channel */
+    --quantum-channel: linear-gradient(90deg, hsl(210 40% 98%) 0%, hsl(214 31% 93%) 50%, hsl(210 40% 98%) 100%);
+    --photon-glow: 0 0 15px hsl(var(--primary) / 0.3);
+    
+    /* Softer Bit Color Coding for Light Theme */
+    --bit-0-rectilinear: 217 85% 65%; /* Soft Blue for 0 in + */
+    --bit-1-rectilinear: 45 85% 60%;  /* Soft Gold for 1 in + */
+    --bit-0-diagonal: 0 65% 60%;      /* Soft Red for 0 in × */
+    --bit-1-diagonal: 142 60% 50%;    /* Soft Green for 1 in × */
+
+    /* Success States */
+    --success: 158 65% 50%;
+    --success-foreground: 0 0% 98%;
+    --warning: 45 85% 60%;
+    --warning-foreground: 222.2 84% 4.9%;
+
+    /* Light Glass Effect */
+    --glass: hsla(0, 0%, 100%, 0.8);
+    --glass-border: hsla(214, 31%, 91%, 0.5);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    /* Dark Theme - Space/Quantum Theme */
+    --background: 230 35% 7%;
+    --foreground: 210 20% 95%;
+
+    --card: 230 35% 9%;
+    --card-foreground: 210 20% 95%;
+
+    --popover: 230 35% 9%;
+    --popover-foreground: 210 20% 95%;
+
+    /* Quantum Indigo Primary */
+    --primary: 238 75% 65%;
+    --primary-foreground: 230 35% 7%;
+    --primary-glow: 238 85% 75%;
+
+    /* Alice's Blue Tone */
+    --alice: 212 85% 60%;
+    --alice-foreground: 230 35% 7%;
+
+    /* Bob's Emerald Tone */
+    --bob: 158 75% 55%;
+    --bob-foreground: 230 35% 7%;
+
+    /* Eve's Warning Red */
+    --eve: 0 75% 60%;
+    --eve-foreground: 210 20% 95%;
+
+    --secondary: 230 20% 15%;
+    --secondary-foreground: 210 20% 95%;
+
+    --muted: 230 20% 12%;
+    --muted-foreground: 215 15% 70%;
+
+    --accent: 230 20% 15%;
+    --accent-foreground: 210 20% 95%;
+
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 210 20% 95%;
+
+    --border: 230 20% 20%;
+    --input: 230 20% 15%;
+    --ring: 238 75% 65%;
+
+    /* Dark Quantum Channel */
+    --quantum-channel: linear-gradient(90deg, hsl(230 35% 7%) 0%, hsl(235 45% 12%) 50%, hsl(230 35% 7%) 100%);
+    --photon-glow: 0 0 20px hsl(var(--primary-glow) / 0.4);
+    
+    /* Bit Color Coding */
+    --bit-0-rectilinear: 212 85% 60%; /* Blue for 0 in + basis */
+    --bit-1-rectilinear: 45 95% 65%;  /* Yellow for 1 in + basis */
+    --bit-0-diagonal: 0 75% 60%;      /* Red for 0 in × basis */
+    --bit-1-diagonal: 120 60% 55%;    /* Green for 1 in × basis */
+
+    /* Success States */
+    --success: 158 75% 55%;
+    --success-foreground: 230 35% 7%;
+    --warning: 45 95% 65%;
+    --warning-foreground: 230 35% 7%;
+
+    /* Dark Glass Effect */
+    --glass: hsla(230, 35%, 15%, 0.8);
+    --glass-border: hsla(210, 20%, 95%, 0.1);
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans transition-colors duration-300;
+    min-height: 100vh;
+  }
+
+  body.light {
+    background: radial-gradient(ellipse at top, hsl(214 31% 96%) 0%, hsl(0 0% 100%) 50%);
+  }
+
+  body.dark {
+    background: radial-gradient(ellipse at top, hsl(230 35% 12%) 0%, hsl(230 35% 7%) 50%);
+  }
+}
+
+@layer components {
+  /* Photon Animations */
+  .photon {
+    @apply relative inline-block w-3 h-3 rounded-full;
+    box-shadow: var(--photon-glow);
+    animation: photon-pulse 2s infinite ease-in-out;
+  }
+
+  .photon-travel {
+    animation: photon-move 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  }
+
+  .photon-glitch {
+    animation: eve-glitch 0.12s ease-in-out;
+  }
+
+  /* Basis Icons */
+  .basis-plus::before {
+    content: '+';
+    @apply font-bold text-lg;
+  }
+
+  .basis-cross::before {
+    content: '×';
+    @apply font-bold text-lg;
+  }
+
+  /* Glass Effect */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+  }
+
+  /* Quantum Channel */
+  .quantum-channel {
+    background: var(--quantum-channel);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .quantum-channel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 20px,
+      hsla(238, 75%, 65%, 0.05) 20px,
+      hsla(238, 75%, 65%, 0.05) 40px
+    );
+    animation: quantum-flow 4s linear infinite;
+  }
+
+  /* Chat Bubbles */
+  .chat-alice {
+    @apply bg-alice/20 border border-alice/30 text-foreground ml-0 mr-auto;
+  }
+
+  .chat-bob {
+    @apply bg-bob/20 border border-bob/30 text-foreground ml-auto mr-0;
+  }
+
+  .chat-eve {
+    @apply bg-eve/20 border border-eve/30 text-foreground mx-auto;
+  }
+
+  .chat-system {
+    @apply bg-muted/30 border border-border text-muted-foreground mx-auto;
+  }
+}
+
+@keyframes photon-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+@keyframes photon-move {
+  0% { transform: translateX(0) translateY(0); }
+  100% { transform: translateX(400px) translateY(0); }
+}
+
+@keyframes eve-glitch {
+  0% { transform: translateX(0) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: translateX(-2px) rotate(-1deg); filter: hue-rotate(90deg); }
+  75% { transform: translateX(2px) rotate(1deg); filter: hue-rotate(-90deg); }
+  100% { transform: translateX(0) rotate(0deg); filter: hue-rotate(0deg); }
+}
+
+@keyframes quantum-flow {
+  0% { transform: translateX(-40px); }
+  100% { transform: translateX(40px); }
+}
+
+/* Bit Color Classes */
+.bit-0-plus { background-color: hsl(var(--bit-0-rectilinear)); }
+.bit-1-plus { background-color: hsl(var(--bit-1-rectilinear)); }
+.bit-0-cross { background-color: hsl(var(--bit-0-diagonal)); }
+.bit-1-cross { background-color: hsl(var(--bit-1-diagonal)); }
