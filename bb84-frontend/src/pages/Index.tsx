@@ -4,18 +4,24 @@ import { BB84Simulator } from "@/components/BB84Simulator";
 
 const Index = () => {
   const [currentView, setCurrentView] = useState<"home" | "simulation">("home");
-  const [simulationMode, setSimulationMode] = useState<"without-eve" | "with-eve">("without-eve");
+  const [simulationMode, setSimulationMode] = useState<
+    "without-eve" | "with-eve"
+  >("without-eve");
 
   const handleStartSimulation = (mode: "without-eve" | "with-eve") => {
     setSimulationMode(mode);
     setCurrentView("simulation");
   };
 
+  const handleBackToHome = () => {
+    setCurrentView("home");
+  };
+
   if (currentView === "home") {
     return <HomeScreen onStartSimulation={handleStartSimulation} />;
   }
 
-  return <BB84Simulator />;
+  return <BB84Simulator mode={simulationMode} onBack={handleBackToHome} />;
 };
 
 export default Index;

@@ -1,19 +1,25 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Slider } from "@/components/ui/slider";
 import { ProtocolState } from "@/types/bb84";
-import { 
-  Settings, 
-  Play, 
-  Shuffle, 
-  Send, 
-  GitCompare, 
-  Key, 
+import {
+  Settings,
+  Play,
+  Shuffle,
+  Send,
+  GitCompare,
+  Key,
   RotateCcw,
   Zap,
-  Timer
+  Timer,
 } from "lucide-react";
 
 interface ControlPanelProps {
@@ -39,11 +45,12 @@ export const ControlPanel = ({
   onModeChange,
   onSpeedChange,
   onQubitCountChange,
-  isProcessing
+  isProcessing,
 }: ControlPanelProps) => {
   const canPrepare = state.step === "idle";
   const canSend = state.step === "prepared";
-  const canCompare = state.step === "measuring" && state.currentRound >= state.totalRounds;
+  const canCompare =
+    state.step === "measuring" && state.currentRound >= state.totalRounds;
   const canGenerateKey = state.step === "comparing";
 
   return (
@@ -57,14 +64,14 @@ export const ControlPanel = ({
           </Badge>
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {/* Configuration */}
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium">Mode</label>
-            <Select 
-              value={state.mode} 
+            <Select
+              value={state.mode}
               onValueChange={onModeChange}
               disabled={state.step !== "idle"}
             >
@@ -77,7 +84,7 @@ export const ControlPanel = ({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
             <label className="text-sm font-medium">Speed</label>
             <Select value={state.speed} onValueChange={onSpeedChange}>
@@ -101,23 +108,30 @@ export const ControlPanel = ({
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
-            <label className="text-sm font-medium">
-              Qubits ({state.totalRounds})
+            <label htmlFor="qubit-count" className="text-sm font-medium">
+              Qubits
             </label>
-            <Slider
-              value={[state.totalRounds]}
-              onValueChange={(values) => onQubitCountChange(values[0])}
-              min={4}
-              max={16}
-              step={4}
-              disabled={state.step !== "idle"}
-              className="mt-2"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                id="qubit-count"
+                type="number"
+                min={4}
+                max={16}
+                step={4}
+                value={state.totalRounds}
+                onChange={(e) => onQubitCountChange(Number(e.target.value))}
+                disabled={state.step !== "idle"}
+                className="h-9 w-20 rounded-md border border-input bg-background px-2 text-sm 
+                 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring 
+                 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <span className="text-xs text-muted-foreground">rounds</span>
+            </div>
           </div>
         </div>
-        
+
         {/* Protocol Steps */}
         <div className="flex flex-wrap gap-2">
           <Button
@@ -130,7 +144,7 @@ export const ControlPanel = ({
             <Shuffle className="w-4 h-4 mr-2" />
             1. Prepare Qubits
           </Button>
-          
+
           <Button
             onClick={onSendQubits}
             disabled={!canSend || isProcessing}
@@ -141,7 +155,7 @@ export const ControlPanel = ({
             <Send className="w-4 h-4 mr-2" />
             2. Send Qubits
           </Button>
-          
+
           <Button
             onClick={onCompareBases}
             disabled={!canCompare || isProcessing}
@@ -152,7 +166,7 @@ export const ControlPanel = ({
             <GitCompare className="w-4 h-4 mr-2" />
             3. Compare Bases
           </Button>
-          
+
           <Button
             onClick={onGenerateKey}
             disabled={!canGenerateKey || isProcessing}
@@ -163,7 +177,7 @@ export const ControlPanel = ({
             <Key className="w-4 h-4 mr-2" />
             4. Generate Key
           </Button>
-          
+
           <Button
             onClick={onReset}
             disabled={isProcessing}
@@ -175,23 +189,27 @@ export const ControlPanel = ({
             Reset
           </Button>
         </div>
-        
+
         {/* Progress indicator */}
         {state.step !== "idle" && (
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Progress</span>
-              <span>{state.currentRound}/{state.totalRounds}</span>
+              <span>
+                {state.currentRound}/{state.totalRounds}
+              </span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
-              <div 
+              <div
                 className="bg-primary h-2 rounded-full transition-all duration-300"
-                style={{ width: `${(state.currentRound / state.totalRounds) * 100}%` }}
+                style={{
+                  width: `${(state.currentRound / state.totalRounds) * 100}%`,
+                }}
               />
             </div>
           </div>
         )}
-        
+
         {isProcessing && (
           <div className="text-center">
             <div className="inline-flex items-center gap-2 text-sm text-primary">

@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button"; // if you’re using shadcn/ui
 import {
   ProtocolState,
   ChatMessage,
@@ -18,15 +19,24 @@ import { ResultsCard } from "./ResultsCard";
 import { ThemeToggle } from "./ThemeToggle";
 import { BB84Api, handleApiError } from "@/services/bb84Api";
 import { useToast } from "@/hooks/use-toast";
+import QubitVisualizer from "./QubitVisualizer";
+import MultiQubitVisualizer from "./MultiQubitVisualizer";
+import OverallCircuit from "./OverallCircuit";
 
 const generateRandomBit = (): Bit => (Math.random() < 0.5 ? 0 : 1);
 const generateRandomBasis = (): Basis => (Math.random() < 0.5 ? "+" : "x");
 
-export const BB84Simulator = () => {
+export const BB84Simulator = ({
+  mode,
+  onBack,
+}: {
+  mode: "without-eve" | "with-eve";
+  onBack: () => void;
+}) => {
   const { toast } = useToast();
 
   const [state, setState] = useState<ProtocolState>({
-    mode: "without-eve",
+    mode,
     step: "idle",
     currentRound: 0,
     totalRounds: 8,
@@ -39,7 +49,7 @@ export const BB84Simulator = () => {
     errorRate: 0,
     speed: "normal",
   });
-
+  const [showCircuits, setShowCircuits] = useState(true);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [photons, setPhotons] = useState<PhotonData[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -310,10 +320,18 @@ export const BB84Simulator = () => {
   return (
     <div className="min-h-screen p-4 relative">
       {/* Theme Toggle */}
+      <div className="absolute top-6 left-6 z-10">
+        <button
+          onClick={onBack}
+          className="px-4 py-2 bg-muted hover:bg-muted/70 rounded-md text-sm font-medium"
+        >
+          ← Back
+        </button>
+      </div>
       <div className="absolute top-6 right-6 z-10">
         <ThemeToggle />
       </div>
-      
+
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -378,11 +396,42 @@ export const BB84Simulator = () => {
           <BobPanel
             bases={state.bobBases}
             measurements={state.bobMeasurements}
-            aliceBases={state.aliceData.map((q) => q.basis)}
+            aliceBases={
+              state.step === "comparing" || state.step === "complete"
+                ? state.aliceData.map((q) => q.basis)
+                : new Array(state.totalRounds).fill(null)
+            } // ✅ Hide until compare step
             currentRound={state.currentRound}
             isActive={state.step === "measuring"}
           />
+          {/* <BobPanel
+            bases={state.bobBases}
+            measurements={state.bobMeasurements}
+            aliceBases={state.aliceData.map((q) => q.basis)}
+            currentRound={state.currentRound}
+            isActive={state.step === "measuring"}
+          /> */}
         </div>
+        {state.step === "complete" && (
+          <div className="my-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowCircuits(!showCircuits)}
+              className="mb-4"
+            >
+              {showCircuits ? "Hide Circuits" : "Show Circuits"}
+            </Button>
+
+            {showCircuits && <OverallCircuit eve={state.mode === "with-eve"} />}
+          </div>
+        )}
+        {/* {state.step === "complete" && (
+          <OverallCircuit eve={state.mode === "with-eve"} />
+        )} */}
+        {/* <MultiQubitVisualizer
+          index={state.currentRound - 1}
+          totalRounds={state.totalRounds}
+        /> */}
 
         {/* Control Panel */}
         <ControlPanel

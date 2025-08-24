@@ -2,7 +2,7 @@ import axios from "axios";
 import { Basis, Bit } from "@/types/bb84";
 
 // Configure base URL for the FastAPI backend
-const API_BASE_URL = "https://bb84-key-distribution.onrender.com"; // Update this to match your backend
+const API_BASE_URL = "http://localhost:8000"; // Update this to match your backend
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -42,6 +42,13 @@ export interface BobMeasureResponse {
   };
 }
 
+// ---------------------------
+// NEW: Visualization Responses
+// ---------------------------
+export interface VisualizationResponse {
+  img_base64: string;
+}
+
 export class BB84Api {
   static async reset(): Promise<void> {
     await api.post("/reset");
@@ -69,6 +76,52 @@ export class BB84Api {
 
   static async getFinalKey(): Promise<FinalKeyResponse> {
     const response = await api.get("/final-key");
+    return response.data;
+  }
+
+  // NEW: Fetch circuit diagram as base64 image
+  static async getCircuit(index: number): Promise<VisualizationResponse> {
+    const response = await api.get(`/visualize/circuit/${index}`);
+    return response.data;
+  }
+
+  // NEW: Fetch Bloch sphere as base64 image
+  static async getBloch(index: number): Promise<VisualizationResponse> {
+    const response = await api.get(`/visualize/bloch/${index}`);
+    return response.data;
+  }
+
+  static async getOverallCircuit(
+    eve: boolean = false
+  ): Promise<{ img_base64: string }> {
+    const response = await api.get(`/visualize/overall-circuit?eve=${eve}`);
+    return response.data;
+  }
+
+  static async getOverallAliceCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/alice");
+    return response.data;
+  }
+
+  static async getOverallEveCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/eve");
+    return response.data;
+  }
+
+  static async getOverallBobCircuit(): Promise<{ img_base64: string }> {
+    const response = await api.get("/visualize/overall/bob");
+    return response.data;
+  }
+  
+  static async getQubitVisualization(
+    who: "alice" | "eve" | "bob",
+    index: number
+  ): Promise<{
+    error: any;
+    circuit: string;
+    bloch: string;
+  }> {
+    const response = await api.get(`/visualize/${who}/${index}`);
     return response.data;
   }
 

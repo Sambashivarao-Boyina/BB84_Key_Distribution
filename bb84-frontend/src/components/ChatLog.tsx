@@ -12,13 +12,21 @@ interface ChatLogProps {
   onToggle?: () => void;
 }
 
-export const ChatLog = ({ messages, isCollapsed = false, onToggle }: ChatLogProps) => {
+export const ChatLog = ({
+  messages,
+  isCollapsed = false,
+  onToggle,
+}: ChatLogProps) => {
   const getSenderIcon = (sender: ChatMessage["sender"]) => {
     switch (sender) {
-      case "alice": return <User className="w-4 h-4 text-alice" />;
-      case "bob": return <User className="w-4 h-4 text-bob" />;
-      case "eve": return <Eye className="w-4 h-4 text-eve" />;
-      case "system": return <Bot className="w-4 h-4 text-primary" />;
+      case "alice":
+        return <User className="w-4 h-4 text-alice" />;
+      case "bob":
+        return <User className="w-4 h-4 text-bob" />;
+      case "eve":
+        return <Eye className="w-4 h-4 text-eve" />;
+      case "system":
+        return <Bot className="w-4 h-4 text-primary" />;
     }
   };
 
@@ -28,16 +36,20 @@ export const ChatLog = ({ messages, isCollapsed = false, onToggle }: ChatLogProp
 
   const getMessageClass = (sender: ChatMessage["sender"]) => {
     switch (sender) {
-      case "alice": return "chat-alice";
-      case "bob": return "chat-bob";
-      case "eve": return "chat-eve";
-      case "system": return "chat-system";
+      case "alice":
+        return "chat-alice";
+      case "bob":
+        return "chat-bob";
+      case "eve":
+        return "chat-eve";
+      case "system":
+        return "chat-system";
     }
   };
 
   if (isCollapsed) {
     return (
-      <Card 
+      <Card
         className="glass border-primary/30 cursor-pointer hover:border-primary/50 transition-colors"
         onClick={onToggle}
       >
@@ -65,9 +77,9 @@ export const ChatLog = ({ messages, isCollapsed = false, onToggle }: ChatLogProp
           </Badge>
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent>
-        <ScrollArea className="h-48">
+        <ScrollArea className="h-80">
           <div className="space-y-3">
             <AnimatePresence>
               {messages.map((message) => (
@@ -93,18 +105,18 @@ export const ChatLog = ({ messages, isCollapsed = false, onToggle }: ChatLogProp
                       </Badge>
                     )}
                   </div>
-                  
+
                   <div className="text-sm leading-relaxed">
                     {message.message}
                   </div>
-                  
+
                   <div className="text-xs opacity-60 mt-1">
                     {new Date(message.timestamp).toLocaleTimeString()}
                   </div>
                 </motion.div>
               ))}
             </AnimatePresence>
-            
+
             {messages.length === 0 && (
               <div className="text-center text-muted-foreground text-sm py-8">
                 Protocol communication will appear here
