@@ -90,21 +90,18 @@ export const BB84Simulator = ({
       await BB84Api.reset();
 
       const aliceData = generateQubits();
-      const bobBases = generateBobBases();
-
       setState((prev) => ({
-        ...prev,
-        step: "prepared",
-        currentRound: 0,
-        aliceData,
-        bobBases,
-        bobMeasurements: new Array(state.totalRounds).fill(null),
-        eveInterceptions: [],
-        matchingIndices: [],
-        sharedKey: "",
-        errorRate: 0,
-      }));
-
+          ...prev,
+          step: "prepared",
+          currentRound: 0,
+          aliceData,
+          bobBases: [], // ✅ No bases yet
+          bobMeasurements: new Array(state.totalRounds).fill(null),
+          eveInterceptions: [],
+          matchingIndices: [],
+          sharedKey: "",
+          errorRate: 0,
+        }));
       setMessages([]);
       setPhotons([]);
       setErrorHistory([]);
@@ -128,93 +125,98 @@ export const BB84Simulator = ({
     }
   }, [state.totalRounds, generateQubits, generateBobBases, addMessage, toast]);
 
-  const onSendQubits = useCallback(async () => {
-    if (state.aliceData.length === 0) return;
+    const onSendQubits = useCallback(async () => {
+      if (state.aliceData.length === 0) return;
 
-    try {
-      setIsProcessing(true);
-      setState((prev) => ({ ...prev, step: "sending", currentRound: 0 }));
+      try {
+        setIsProcessing(true);
 
-      const eveInterceptions: boolean[] = [];
-      const bobMeasurements: (Bit | null)[] = new Array(state.totalRounds).fill(
-        null
-      );
+        const bobBases = generateBobBases();
+        setState((prev) => ({
+          ...prev,
+          step: "sending",
+          currentRound: 0,
+          bobBases,
+        }));
 
-      for (let i = 0; i < state.aliceData.length; i++) {
-        const qubit = state.aliceData[i];
-        const bobBasis = state.bobBases[i];
+        const eveInterceptions: boolean[] = [];
+        const bobMeasurements: (Bit | null)[] = new Array(state.totalRounds).fill(
+          null
+        );
 
-        // Update current round
-        setState((prev) => ({ ...prev, currentRound: i }));
+        for (let i = 0; i < state.aliceData.length; i++) {
+          const qubit = state.aliceData[i];
+          const bobBasis = bobBases[i]; 
 
-        // Send qubit from Alice
-        await BB84Api.sendQubit({ bit: qubit.bit, basis: qubit.basis });
-        addMessage("alice", `Sent bit ${qubit.bit} in ${qubit.basis} basis`, i);
+          setState((prev) => ({ ...prev, currentRound: i }));
 
-        // Create and animate photon
-        const photon: PhotonData = {
-          id: `photon-${i}`,
-          bit: qubit.bit,
-          basis: qubit.basis,
-          round: i,
-          x: 0,
-          y: 0,
-          isIntercepted: false,
-          isComplete: false,
-        };
 
-        setPhotons((prev) => [...prev, photon]);
+          await BB84Api.sendQubit({ bit: qubit.bit, basis: qubit.basis });
+          addMessage("alice", `Sent bit ${qubit.bit} in ${qubit.basis} basis`, i);
 
-        // Eve interception (if enabled)
-        const shouldIntercept =
-          state.mode === "with-eve" && Math.random() < eveInterceptionRate;
-        eveInterceptions[i] = shouldIntercept;
+          const photon: PhotonData = {
+            id: `photon-${i}`,
+            bit: qubit.bit,
+            basis: qubit.basis,
+            round: i,
+            x: 0,
+            y: 0,
+            isIntercepted: false,
+            isComplete: false,
+          };
 
-        if (shouldIntercept) {
-          await BB84Api.eveIntercept(i);
-          photon.isIntercepted = true;
-          addMessage("eve", `Intercepted and measured qubit ${i + 1}`, i);
+          setPhotons((prev) => [...prev, photon]);
+
+          const shouldIntercept =
+            state.mode === "with-eve" && Math.random() < eveInterceptionRate;
+          eveInterceptions[i] = shouldIntercept;
+
+          if (shouldIntercept) {
+            await BB84Api.eveIntercept(i);
+            photon.isIntercepted = true;
+            addMessage("eve", `Intercepted and measured qubit ${i + 1}`, i);
+          }
+
+          const bobResponse = await BB84Api.bobMeasure(i, { basis: bobBasis });
+          bobMeasurements[i] = bobResponse.bob_result.measured;
+          addMessage(
+            "bob",
+            `Measured in ${bobBasis} basis → ${bobResponse.bob_result.measured}`,
+            i
+          );
+
+          await new Promise((resolve) =>
+            setTimeout(
+              resolve,
+              state.speed === "fast"
+                ? 500
+                : state.speed === "normal"
+                ? 1000
+                : 1500
+            )
+          );
         }
 
-        const bobResponse = await BB84Api.bobMeasure(i, { basis: bobBasis });
-        bobMeasurements[i] = bobResponse.bob_result.measured;
-        addMessage(
-          "bob",
-          `Measured in ${bobBasis} basis → ${bobResponse.bob_result.measured}`,
-          i
-        );
-        // Wait for animation
-        await new Promise((resolve) =>
-          setTimeout(
-            resolve,
-            state.speed === "fast"
-              ? 500
-              : state.speed === "normal"
-              ? 1000
-              : 1500
-          )
-        );
+        setState((prev) => ({
+          ...prev,
+          step: "measuring",
+          currentRound: state.totalRounds,
+          bobMeasurements,
+          eveInterceptions,
+        }));
+
+        addMessage("system", "All qubits transmitted and measured");
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: handleApiError(error),
+          variant: "destructive",
+        });
+      } finally {
+        setIsProcessing(false);
       }
+    }, [state.aliceData, state.totalRounds, state.mode, state.speed, eveInterceptionRate, generateBobBases, addMessage, toast]);
 
-      setState((prev) => ({
-        ...prev,
-        step: "measuring",
-        currentRound: state.totalRounds,
-        bobMeasurements,
-        eveInterceptions,
-      }));
-
-      addMessage("system", "All qubits transmitted and measured");
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: handleApiError(error),
-        variant: "destructive",
-      });
-    } finally {
-      setIsProcessing(false);
-    }
-  }, [state, eveInterceptionRate, addMessage, toast]);
 
   const onCompareBases = useCallback(async () => {
     try {
@@ -412,26 +414,6 @@ export const BB84Simulator = ({
             isActive={state.step === "measuring"}
           /> */}
         </div>
-        {state.step === "complete" && (
-          <div className="my-4">
-            <Button
-              variant="outline"
-              onClick={() => setShowCircuits(!showCircuits)}
-              className="mb-4"
-            >
-              {showCircuits ? "Hide Circuits" : "Show Circuits"}
-            </Button>
-
-            {showCircuits && <OverallCircuit eve={state.mode === "with-eve"} />}
-          </div>
-        )}
-        {/* {state.step === "complete" && (
-          <OverallCircuit eve={state.mode === "with-eve"} />
-        )} */}
-        {/* <MultiQubitVisualizer
-          index={state.currentRound - 1}
-          totalRounds={state.totalRounds}
-        /> */}
 
         {/* Control Panel */}
         <ControlPanel
@@ -451,11 +433,6 @@ export const BB84Simulator = ({
 
         {/* Bottom Row: Chat and Results */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ChatLog
-            messages={messages}
-            isCollapsed={chatCollapsed}
-            onToggle={() => setChatCollapsed(!chatCollapsed)}
-          />
 
           <ResultsCard
             sharedKey={state.sharedKey}
@@ -465,7 +442,29 @@ export const BB84Simulator = ({
             totalBits={state.totalRounds}
             errorHistory={errorHistory}
           />
+
+          <ChatLog
+            messages={messages}
+            isCollapsed={chatCollapsed}
+            onToggle={() => setChatCollapsed(!chatCollapsed)}
+          />
+
+
         </div>
+
+                {state.step === "complete" && (
+          <div className="my-4">
+            <Button
+              variant="outline"
+              onClick={() => setShowCircuits(!showCircuits)}
+              className="mb-4"
+            >
+              {showCircuits ? "Hide Circuits" : "Show Circuits"}
+            </Button>
+
+            {showCircuits && <OverallCircuit eve={state.mode === "with-eve"} />}
+          </div>
+        )}
       </div>
     </div>
   );
