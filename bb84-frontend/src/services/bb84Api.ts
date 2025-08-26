@@ -2,7 +2,7 @@ import axios from "axios";
 import { Basis, Bit } from "@/types/bb84";
 
 // Configure base URL for the FastAPI backend
-const API_BASE_URL = "https://bb84-key-distribution.onrender.com"; // Update this to match your backend
+const API_BASE_URL = "https://bb84-key-distribution.onrender.com" ; //"http://127.0.0.1:8000"// Update this to match your backend
 
 const api = axios.create({
   baseURL: API_BASE_URL,
