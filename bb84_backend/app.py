@@ -138,6 +138,10 @@ def build_bob_circuit():
 # API Endpoints
 # ---------------------------
 
+@app.get("/")
+def welcome():
+    return {"message":"Welcome to api"}
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
