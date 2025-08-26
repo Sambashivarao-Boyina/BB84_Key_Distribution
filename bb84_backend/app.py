@@ -16,7 +16,6 @@ from qiskit.quantum_info import Pauli
 from qiskit import QuantumRegister, ClassicalRegister
 from fastapi import Query
 app = FastAPI(title="BB84 Quantum Key Distribution API (Qiskit)")
-import gc
 
 app.add_middleware(
     CORSMiddleware,
@@ -48,28 +47,12 @@ qubits_bob = []       # Bob’s measurements
 # ---------------------------
 # Helper: Prepare qubit state with Qiskit
 # ---------------------------
-# def fig_to_base64(fig):
-#     buf = io.BytesIO()
-#     fig.savefig(buf, format="png", bbox_inches="tight")
-#     buf.seek(0)
-#     encoded = base64.b64encode(buf.read()).decode("utf-8")
-#     plt.close(fig)
-#     return encoded
-
 def fig_to_base64(fig):
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
     encoded = base64.b64encode(buf.read()).decode("utf-8")
-
-    # Force cleanup
-    try:
-        plt.close(fig)   # close pyplot reference
-        fig.clf()        # clear figure contents
-    except Exception:
-        pass
-
-    gc.collect()  # run garbage collector
+    plt.close(fig)
     return encoded
 
 def prepare_qubit(bit: int, basis: str):
@@ -101,8 +84,7 @@ def measure_qubit(qc: QuantumCircuit, basis: str) -> int:
     measured_bit = int(max(counts, key=counts.get))
     return measured_bit
 
-from fastapi import Query
-from qiskit import QuantumRegister, ClassicalRegister, QuantumCircuit
+
 
 def build_alice_circuit():
     n = len(qubits_sent)
@@ -369,9 +351,7 @@ def visualize_overall(eve: str = Query("false")):
             qc.h(qr[i])
         qc.measure(qr[i], cr[i])
 
-    # fig = qc.draw("mpl")
-    with plt.ioff():  # prevent interactive backend memory leaks
-        fig = qc.draw("mpl")
+    fig = qc.draw("mpl")
     encoded = fig_to_base64(fig)
     return {"img_base64": encoded}
 
@@ -487,14 +467,6 @@ def visualize_bloch(index: int):
         state.expectation_value(Pauli("Z")).real,
     ]
 
-    # fig = plot_bloch_vector(bloch_vector)
-    # encoded = fig_to_base64(fig)
-    with plt.ioff():
-        fig = plot_bloch_vector(bloch_vector)
-
+    fig = plot_bloch_vector(bloch_vector)
     encoded = fig_to_base64(fig)
-
-    # Free heavy state object
-    del state
     return {"img_base64": encoded}
-
