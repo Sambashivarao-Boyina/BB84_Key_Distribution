@@ -40,7 +40,7 @@ export const BB84Simulator = ({
     mode,
     step: "idle",
     currentRound: 0,
-    totalRounds: 16,
+    totalRounds: 8,
     aliceData: [],
     bobBases: [],
     bobMeasurements: [],
