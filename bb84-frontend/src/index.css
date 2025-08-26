@@ -215,7 +215,6 @@
     background: var(--quantum-channel);
     position: relative;
     overflow: hidden;
-    @apply relative w-full h-32 rounded-lg overflow-hidden;
   }
 
   .quantum-channel::before {
@@ -274,20 +273,6 @@
   0% { transform: translateX(-40px); }
   100% { transform: translateX(40px); }
 }
-
-@keyframes photonTravel {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(calc(100% - 2rem)); /* move across container */
-  }
-}
-
-.animate-photon {
-  animation: photonTravel 4s linear infinite alternate;
-}
-
 
 /* Bit Color Classes */
 .bit-0-plus { background-color: hsl(var(--bit-0-rectilinear)); }

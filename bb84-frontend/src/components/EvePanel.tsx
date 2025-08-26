@@ -45,7 +45,7 @@ export const EvePanel = ({
         
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
-            <div className="text-sm text-muted-foreground min-w-fit">
+            {/* <div className="text-sm text-muted-foreground min-w-fit">
               Interception Rate:
             </div>
             <div className="flex-1">
@@ -56,10 +56,10 @@ export const EvePanel = ({
                 step={10}
                 className="w-full"
               />
-            </div>
-            <div className="text-sm font-mono text-eve min-w-fit">
+            </div> */}
+            {/* <div className="text-sm font-mono text-eve min-w-fit">
               {interceptionPercentage}%
-            </div>
+            </div> */}
           </div>
           
           <div className="grid grid-cols-8 gap-1">

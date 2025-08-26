@@ -47,15 +47,17 @@ export const QuantumChannel = ({
           </div>
           
           {/* Photons */}
-          <div className="absolute inset-0">
-            {photons.map((photon) => (
-              <Photon
-                key={photon.id}
-                photon={photon}
-                speed={speed}
-                onAnimationComplete={() => onPhotonComplete?.(photon.id)}
-              />
-            ))}
+          <div className="absolute inset-0 w-full h-full">
+            {photons
+              .filter(photon => !photon.isComplete)
+              .map((photon) => (
+                <Photon
+                  key={photon.id}
+                  photon={photon}
+                  speed={speed}
+                  onAnimationComplete={() => onPhotonComplete?.(photon.id)}
+                />
+              ))}
           </div>
           
           {/* Activity indicator */}

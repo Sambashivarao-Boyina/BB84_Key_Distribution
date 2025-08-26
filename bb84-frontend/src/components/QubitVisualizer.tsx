@@ -18,7 +18,7 @@ export default function QubitVisualizer({
       // Ensure we only load valid qubits (0..totalRounds-1)
       if (index < 0 || index >= totalRounds) return;
 
-      const data = await BB84Api.getQubitVisualization(index);
+      const data = await BB84Api.getQubitVisualization("alice", index);
 
       setVisualizations((prev) => {
         if (prev.find((v) => v.index === index)) return prev; // avoid duplicates

@@ -72,7 +72,7 @@ export const BobPanel = ({
               </Button>
             </div>
           </div>
-        )} 
+        )}
 
         <div className="grid grid-cols-4 gap-2">
           {Array.from({ length: Math.max(bases.length, 8) }).map((_, index) => (
@@ -98,8 +98,8 @@ export const BobPanel = ({
           index <= currentRound
             ? aliceBases[index] // only check match after reveal
               ? basesMatch(index)
-                ? "bg-green-300 dark:bg-green-500 border-green-500"
-                : "bg-red-300 dark:bg-red-500 border-red-500"
+                ? "bg-green-200 dark:bg-green-500 border-green-500"
+                : "bg-red-200 dark:bg-red-500 border-red-500"
               : "bg-muted/20 border-border"
             : "bg-transparent border-transparent" // not yet revealed
         }
