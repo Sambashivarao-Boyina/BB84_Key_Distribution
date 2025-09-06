@@ -32,7 +32,7 @@ export const BobPanel = ({
 
   return (
     <Card className="h-full glass border-bob/30">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-bob">
           <User className="w-5 h-5" />
           Bob
@@ -40,6 +40,15 @@ export const BobPanel = ({
             Receiver
           </Badge>
         </CardTitle>
+
+        <div>
+          {bases.length > 0 && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div>Green ✓ = Basis match, Red ✗ = Basis mismatch</div>
+              <div>Only matching bases contribute to the key</div>
+            </div>
+          )}
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
@@ -93,7 +102,7 @@ export const BobPanel = ({
                 type: "spring",
                 stiffness: 300,
               }}
-              className={`relative aspect-square border-2 rounded-lg p-2 text-center transition-colors
+              className={`relative h-20 border-2 rounded-lg p-1 text-center transition-colors
         ${
           index <= currentRound
             ? aliceBases[index] // only check match after reveal
@@ -110,14 +119,14 @@ export const BobPanel = ({
                 <>
                   {/* Basis symbol */}
                   <div
-                    className={`text-lg font-mono ${
+                    className={`text-sm font-mono ${
                       bases[index] === "+" ? "basis-plus" : "basis-cross"
                     }`}
                   />
 
                   {/* Show measured result only if exists */}
                   {measurements[index] !== null && (
-                    <div className="text-xs font-mono mt-1">
+                    <div className="text-xs font-mono mt-0.5">
                       Measured: {measurements[index]}
                     </div>
                   )}
@@ -135,13 +144,6 @@ export const BobPanel = ({
             </motion.div>
           ))}
         </div>
-
-        {bases.length > 0 && (
-          <div className="text-xs text-muted-foreground space-y-1">
-            <div>Green ✓ = Basis match, Red ✗ = Basis mismatch</div>
-            <div>Only matching bases contribute to the key</div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

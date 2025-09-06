@@ -10,10 +10,14 @@ interface AlicePanelProps {
   isActive: boolean;
 }
 
-export const AlicePanel = ({ qubits, currentRound, isActive }: AlicePanelProps) => {
+export const AlicePanel = ({
+  qubits,
+  currentRound,
+  isActive,
+}: AlicePanelProps) => {
   return (
     <Card className="h-full glass border-alice/30">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 flex flex-row justify-between items-center">
         <CardTitle className="flex items-center gap-2 text-alice">
           <User className="w-5 h-5" />
           Alice
@@ -21,49 +25,67 @@ export const AlicePanel = ({ qubits, currentRound, isActive }: AlicePanelProps) 
             Sender
           </Badge>
         </CardTitle>
+        <div>
+          {qubits.length > 0 && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              <div>Colors: Blue(0+), Yellow(1+), Red(0×), Green(1×)</div>
+              <div>Symbols: + (rectilinear), × (diagonal)</div>
+            </div>
+          )}
+        </div>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
           Quantum Bits & Bases
         </div>
-        
+
         <div className="grid grid-cols-4 gap-2">
           {qubits.map((qubit, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ 
-                opacity: 1, 
+              animate={{
+                opacity: 1,
                 scale: index === currentRound ? 1.1 : 1,
-                borderColor: index === currentRound && isActive ? "hsl(var(--alice))" : "transparent"
+                borderColor:
+                  index === currentRound && isActive
+                    ? "hsl(var(--alice))"
+                    : "transparent",
               }}
-              transition={{ 
+              transition={{
                 delay: index * 0.05,
                 duration: 0.3,
                 type: "spring",
-                stiffness: 300
+                stiffness: 300,
               }}
-              className="relative aspect-square border-2 rounded-lg p-2 text-center transition-colors"
+              className="relative  border-2 rounded-lg p-2 h-20 text-center transition-colors"
             >
               {/* Bit representation */}
-              <div className={`w-full h-6 rounded mb-1 ${
-                qubit.bit === 0 && qubit.basis === "+" ? "bg-alice/60" :
-                qubit.bit === 1 && qubit.basis === "+" ? "bg-warning/60" :
-                qubit.bit === 0 && qubit.basis === "x" ? "bg-destructive/60" :
-                "bg-success/60"
-              }`} />
-              
+              <div
+                className={`w-full h-4 rounded mb-1 ${
+                  qubit.bit === 0 && qubit.basis === "+"
+                    ? "bg-alice/60"
+                    : qubit.bit === 1 && qubit.basis === "+"
+                    ? "bg-warning/60"
+                    : qubit.bit === 0 && qubit.basis === "x"
+                    ? "bg-destructive/60"
+                    : "bg-success/60"
+                }`}
+              />
+
               {/* Basis symbol */}
-              <div className={`text-lg font-mono ${
-                qubit.basis === "+" ? "basis-plus" : "basis-cross"
-              }`} />
-              
+              <div
+                className={`text-sm font-mono ${
+                  qubit.basis === "+" ? "basis-plus" : "basis-cross"
+                }`}
+              />
+
               {/* Bit value */}
-              <div className="text-xs font-mono mt-1 text-muted-foreground">
+              <div className="text-xs font-mono text-muted-foreground">
                 {qubit.bit}
               </div>
-              
+
               {/* Current round indicator */}
               {index === currentRound && isActive && (
                 <motion.div
@@ -75,13 +97,6 @@ export const AlicePanel = ({ qubits, currentRound, isActive }: AlicePanelProps) 
             </motion.div>
           ))}
         </div>
-        
-        {qubits.length > 0 && (
-          <div className="text-xs text-muted-foreground space-y-1">
-            <div>Colors: Blue(0+), Yellow(1+), Red(0×), Green(1×)</div>
-            <div>Symbols: + (rectilinear), × (diagonal)</div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

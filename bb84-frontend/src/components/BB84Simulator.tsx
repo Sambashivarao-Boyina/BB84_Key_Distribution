@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button"; // if you’re using shadcn/ui
 import {
@@ -39,10 +39,11 @@ export const BB84Simulator = ({
   const [state, setState] = useState<ProtocolState>({
     mode,
     step: "idle",
-    currentRound: 0,
+    currentRound: 10000,
     totalRounds: 8,
     aliceData: [],
     bobBases: [],
+    eveBasis: [],
     bobMeasurements: [],
     eveInterceptions: [],
     matchingIndices: [],
@@ -57,6 +58,9 @@ export const BB84Simulator = ({
   const [chatCollapsed, setChatCollapsed] = useState(false);
   const [eveInterceptionRate, setEveInterceptionRate] = useState(1.0);
   const [errorHistory, setErrorHistory] = useState<number[]>([]);
+
+  const simulationGridRef = useRef<HTMLDivElement | null>(null);
+  const keyResultsRef = useRef<HTMLDivElement | null>(null);
 
   const addMessage = useCallback(
     (sender: ChatMessage["sender"], message: string, round?: number) => {
@@ -85,6 +89,12 @@ export const BB84Simulator = ({
     );
   }, [state.totalRounds]);
 
+  const generateEveBases = useCallback((): Basis[] => {
+    return Array.from({ length: state.totalRounds }, () =>
+      generateRandomBasis()
+    );
+  }, [state.totalRounds]);
+
   const onPrepareQubits = useCallback(async () => {
     try {
       setIsProcessing(true);
@@ -92,13 +102,15 @@ export const BB84Simulator = ({
 
       const aliceData = generateQubits();
       const bobBases = generateBobBases();
+      const eveBasis = generateEveBases();
 
       setState((prev) => ({
         ...prev,
         step: "prepared",
-        currentRound: 0,
+        currentRound: -1,
         aliceData,
         bobBases,
+        eveBasis,
         bobMeasurements: new Array(state.totalRounds).fill(null),
         eveInterceptions: [],
         matchingIndices: [],
@@ -131,6 +143,14 @@ export const BB84Simulator = ({
 
   const onSendQubits = useCallback(async () => {
     if (state.aliceData.length === 0) return;
+
+    // Delay scroll until React updates the DOM
+    setTimeout(() => {
+      simulationGridRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
 
     try {
       setIsProcessing(true);
@@ -218,6 +238,13 @@ export const BB84Simulator = ({
   }, [state, eveInterceptionRate, addMessage, toast]);
 
   const onCompareBases = useCallback(async () => {
+    // Delay scroll until React updates the DOM
+    setTimeout(() => {
+      simulationGridRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
     try {
       setIsProcessing(true);
 
@@ -253,6 +280,12 @@ export const BB84Simulator = ({
   }, [addMessage, toast]);
 
   const onGenerateKey = useCallback(async () => {
+    setTimeout(() => {
+      keyResultsRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }, 100);
     try {
       setIsProcessing(true);
 
@@ -304,6 +337,7 @@ export const BB84Simulator = ({
       totalRounds: state.totalRounds,
       aliceData: [],
       bobBases: [],
+      eveBasis: [],
       bobMeasurements: [],
       eveInterceptions: [],
       matchingIndices: [],
@@ -366,31 +400,21 @@ export const BB84Simulator = ({
                 totalRounds={state.totalRounds}
                 onInterceptionRateChange={setEveInterceptionRate}
                 currentRound={state.currentRound}
+                evesBasis={state.eveBasis}
               />
             )}
           </AnimatePresence>
 
           {/* Main Simulation Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div
+            ref={simulationGridRef}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          >
             {/* Alice Panel */}
             <AlicePanel
               qubits={state.aliceData}
               currentRound={state.currentRound}
               isActive={state.step === "sending"}
-            />
-
-            {/* Quantum Channel */}
-            <QuantumChannel
-              photons={photons}
-              isActive={state.step === "sending"}
-              speed={state.speed}
-              onPhotonComplete={(photonId) => {
-                setPhotons((prev) =>
-                  prev.map((p) =>
-                    p.id === photonId ? { ...p, isComplete: true } : p
-                  )
-                );
-              }}
             />
 
             {/* Bob Panel */}
@@ -413,6 +437,54 @@ export const BB84Simulator = ({
             isActive={state.step === "measuring"}
           /> */}
           </div>
+
+          {/* Quantum Channel */}
+          <QuantumChannel
+            photons={photons}
+            isActive={state.step === "sending"}
+            speed={state.speed}
+            onPhotonComplete={(photonId) => {
+              setPhotons((prev) =>
+                prev.map((p) =>
+                  p.id === photonId ? { ...p, isComplete: true } : p
+                )
+              );
+            }}
+            aliceBasis={
+              state.currentRound < state.aliceData.length
+                ? state.aliceData[state.currentRound]?.basis
+                : "+"
+            }
+            bobBasis={
+              state.currentRound < state.bobBases.length
+                ? state.bobBases[state.currentRound]
+                : "+"
+            }
+            eveBasis={
+              state.currentRound < state.eveBasis.length
+                ? state.eveBasis[state.currentRound]
+                : "+"
+            }
+            eveEnabled={state.mode === "with-eve"}
+            currentRound={state.currentRound}
+          />
+
+          {/* Control Panel */}
+          <ControlPanel
+            state={state}
+            onPrepareQubits={onPrepareQubits}
+            onSendQubits={onSendQubits}
+            onCompareBases={onCompareBases}
+            onGenerateKey={onGenerateKey}
+            onReset={onReset}
+            onModeChange={(mode) => setState((prev) => ({ ...prev, mode }))}
+            onSpeedChange={(speed) => setState((prev) => ({ ...prev, speed }))}
+            onQubitCountChange={(count) =>
+              setState((prev) => ({ ...prev, totalRounds: count }))
+            }
+            isProcessing={isProcessing}
+          />
+
           {state.step === "complete" && (
             <div className="my-4">
               <Button
@@ -436,24 +508,11 @@ export const BB84Simulator = ({
           totalRounds={state.totalRounds}
         /> */}
 
-          {/* Control Panel */}
-          <ControlPanel
-            state={state}
-            onPrepareQubits={onPrepareQubits}
-            onSendQubits={onSendQubits}
-            onCompareBases={onCompareBases}
-            onGenerateKey={onGenerateKey}
-            onReset={onReset}
-            onModeChange={(mode) => setState((prev) => ({ ...prev, mode }))}
-            onSpeedChange={(speed) => setState((prev) => ({ ...prev, speed }))}
-            onQubitCountChange={(count) =>
-              setState((prev) => ({ ...prev, totalRounds: count }))
-            }
-            isProcessing={isProcessing}
-          />
-
           {/* Bottom Row: Chat and Results */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div
+            ref={keyResultsRef}
+            className="grid grid-cols-1 lg:grid-cols-2 gap-6"
+          >
             <ResultsCard
               sharedKey={state.sharedKey}
               errorRate={state.errorRate}

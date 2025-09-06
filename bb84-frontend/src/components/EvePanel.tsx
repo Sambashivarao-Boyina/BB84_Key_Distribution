@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Eye, AlertTriangle } from "lucide-react";
+import { Basis } from "@/types/bb84";
 
 interface EvePanelProps {
   isActive: boolean;
@@ -12,18 +13,25 @@ interface EvePanelProps {
   totalRounds: number;
   onInterceptionRateChange?: (rate: number) => void;
   currentRound: number;
+  evesBasis: Basis[];
 }
 
-export const EvePanel = ({ 
-  isActive, 
-  interceptionRate, 
-  interceptedRounds, 
-  totalRounds, 
+export const EvePanel = ({
+  isActive,
+  interceptionRate,
+  interceptedRounds,
+  totalRounds,
   onInterceptionRateChange,
-  currentRound 
+  currentRound,
+  evesBasis,
 }: EvePanelProps) => {
   const interceptionPercentage = Math.round(interceptionRate * 100);
-  
+
+  // Helper function to get basis symbol
+  const getBasisSymbol = (basis: Basis) => {
+    return basis === "+" ? "+" : "×";
+  };
+
   return (
     <motion.div
       initial={{ y: -100, opacity: 0 }}
@@ -42,7 +50,7 @@ export const EvePanel = ({
             </Badge>
           </CardTitle>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           <div className="flex items-center gap-4">
             {/* <div className="text-sm text-muted-foreground min-w-fit">
@@ -61,26 +69,37 @@ export const EvePanel = ({
               {interceptionPercentage}%
             </div> */}
           </div>
-          
+
           <div className="grid grid-cols-8 gap-1">
             {Array.from({ length: totalRounds }).map((_, index) => (
               <motion.div
                 key={index}
                 initial={{ scale: 0 }}
-                animate={{ 
+                animate={{
                   scale: 1,
-                  backgroundColor: interceptedRounds.includes(index) ? "hsl(var(--eve))" : "hsl(var(--muted))",
-                  borderColor: index === currentRound && isActive ? "hsl(var(--eve))" : "transparent"
+                  backgroundColor: interceptedRounds.includes(index)
+                    ? "hsl(var(--eve))"
+                    : "hsl(var(--muted))",
+                  borderColor:
+                    index === currentRound && isActive
+                      ? "hsl(var(--eve))"
+                      : "transparent",
                 }}
                 transition={{ delay: index * 0.02 }}
-                className="aspect-square rounded border-2 flex items-center justify-center"
+                className="aspect-square rounded border-2 flex items-center justify-center relative text-xs font-bold"
               >
-                {interceptedRounds.includes(index) && (
-                  <Eye className="w-2 h-2 text-eve-foreground" />
+                {/* Show basis for rounds up to and including current round if intercepted */}
+                {index <= currentRound && evesBasis[index] && (
+                  <span className="text-eve-foreground font-bold text-lg">
+                    {evesBasis[index]}
+                  </span>
                 )}
+
+                
+
                 {index === currentRound && isActive && (
                   <motion.div
-                    className="absolute inset-0 border border-eve rounded"
+                    className="absolute inset-0 z-10 border border-eve rounded"
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 0.8, repeat: Infinity }}
                   />
@@ -88,12 +107,17 @@ export const EvePanel = ({
               </motion.div>
             ))}
           </div>
-          
+
           <div className="text-xs text-muted-foreground">
-            <div>Intercepted: {interceptedRounds.length}/{totalRounds} qubits</div>
+            <div>
+              Intercepted: {interceptedRounds.length}/{totalRounds} qubits
+            </div>
             <div>Each interception introduces measurement disturbance</div>
+            <div className="mt-1 text-eve/80">
+              Basis: + (rectilinear) × (diagonal)
+            </div>
           </div>
-          
+
           {isActive && (
             <motion.div
               className="text-xs text-eve"

@@ -13,6 +13,7 @@ export interface ProtocolState {
   totalRounds: number;
   aliceData: QubitData[];
   bobBases: Basis[];
+  eveBasis: Basis[];
   bobMeasurements: (Bit | null)[];
   eveInterceptions: boolean[];
   matchingIndices: number[];

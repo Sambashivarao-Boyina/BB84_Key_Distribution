@@ -1,9 +1,9 @@
 import matplotlib
 matplotlib.use("Agg")
-from fastapi import FastAPI
+from fastapi import FastAPI,Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit, transpile,QuantumRegister, ClassicalRegister
 from qiskit_aer import Aer
 import random
 import matplotlib.pyplot as plt
@@ -13,8 +13,6 @@ import io
 import base64
 from fastapi.responses import JSONResponse
 from qiskit.quantum_info import Pauli
-from qiskit import QuantumRegister, ClassicalRegister
-from fastapi import Query
 app = FastAPI(title="BB84 Quantum Key Distribution API (Qiskit)")
 
 app.add_middleware(
@@ -248,6 +246,16 @@ def compare_bases():
     """Alice and Bob publicly compare bases, keep only matching ones."""
     if not qubits_sent or not qubits_bob:
         return {"error": "No qubits to compare"}
+    
+    # print("Alice");
+    # for i in range(len(qubits_sent)):
+    #     print({"bit":qubits_sent[i]["bit"], "basis":qubits_sent[i]["basis"]})
+    # print("Eve");
+    # for i in range(len(qubits_eve)):
+    #     print({"bit":qubits_eve[i]["measured"], "basis":qubits_eve[i]["basis"]})
+    # print("Bob");
+    # for i in range(len(qubits_bob)):
+    #     print({"bit":qubits_bob[i]["measured"], "basis":qubits_bob[i]["basis"]})
 
     matching_indices = []
     alice_key = []
@@ -260,6 +268,12 @@ def compare_bases():
             matching_indices.append(i)
             alice_key.append(qubits_sent[i]["bit"])
             bob_key.append(qubits_bob[i]["measured"])
+
+    # print({
+    #     "matching_indices": matching_indices,
+    #     "alice_key": alice_key,
+    #     "bob_key": bob_key
+    # })
 
     return {
         "matching_indices": matching_indices,
