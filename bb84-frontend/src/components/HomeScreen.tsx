@@ -23,11 +23,11 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
   return (
     <div className="min-h-screen">
       <Navbar />
-      
+
       <div className="pt-20 pb-8 flex items-center justify-center p-4 min-h-screen">
         <div className="max-w-6xl mx-auto space-y-8">
           {/* Header */}
-          <motion.div 
+          <motion.div
             className="text-center space-y-4"
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
@@ -37,42 +37,44 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               BB84 Protocol
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Experience quantum cryptography in action. Watch Alice and Bob establish a secure key using quantum mechanics, 
-              and see how eavesdropping attempts by Eve can be detected.
+              Experience quantum cryptography in action. Watch Alice and Bob
+              establish a secure key using quantum mechanics, and see how
+              eavesdropping attempts by Eve can be detected.
             </p>
-            
-            {/* Animated intro visualization */}
-            <motion.div 
+
+            <motion.div
               className="flex items-center justify-center gap-8 py-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1 }}
             >
-              <div className="flex items-center gap-2 text-alice">
+              <div className="flex items-center gap-2 text-blue-600">
                 <Users className="w-5 h-5" />
                 <span className="font-medium">Alice</span>
               </div>
-              
-              <div className="flex items-center gap-1">
+
+              {/* Animation container with fixed width */}
+              <div className="relative w-40 h-6 flex items-center">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <motion.div
                     key={i}
-                    className="w-2 h-2 bg-primary rounded-full"
-                    animate={{ 
-                      x: [0, 40, 80, 120, 160],
-                      opacity: [0, 1, 1, 1, 0] 
+                    className="absolute w-2 h-2 bg-blue-500 rounded-full"
+                    style={{ left: 0 }}
+                    animate={{
+                      x: [0, 32, 64, 96, 128],
+                      opacity: [0, 1, 1, 1, 1],
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 2,
                       delay: i * 0.3,
                       repeat: Infinity,
-                      repeatDelay: 1
+                      repeatDelay: 1,
                     }}
                   />
                 ))}
               </div>
-              
-              <div className="flex items-center gap-2 text-bob">
+
+              <div className="flex items-center gap-2 text-green-600">
                 <span className="font-medium">Bob</span>
                 <Users className="w-5 h-5" />
               </div>
@@ -80,7 +82,7 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
           </motion.div>
 
           {/* Protocol Explanation */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -95,7 +97,8 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Alice encodes random bits in quantum states using random bases and sends photons to Bob through a quantum channel.
+                  Alice encodes random bits in quantum states using random bases
+                  and sends photons to Bob through a quantum channel.
                 </p>
               </CardContent>
             </Card>
@@ -109,7 +112,8 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Bob measures each photon using randomly chosen bases, sometimes matching Alice's basis, sometimes not.
+                  Bob measures each photon using randomly chosen bases,
+                  sometimes matching Alice's basis, sometimes not.
                 </p>
               </CardContent>
             </Card>
@@ -123,14 +127,15 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-muted-foreground">
-                  Alice and Bob publicly compare their bases and keep only the bits where they used matching bases.
+                  Alice and Bob publicly compare their bases and keep only the
+                  bits where they used matching bases.
                 </p>
               </CardContent>
             </Card>
           </motion.div>
 
           {/* Simulation Mode Selection */}
-          <motion.div 
+          <motion.div
             className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -142,21 +147,25 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
                 <CardTitle className="flex items-center gap-2 text-success">
                   <Lock className="w-6 h-6" />
                   Secure Channel
-                  <Badge variant="outline" className="ml-auto border-success/50 text-success">
+                  <Badge
+                    variant="outline"
+                    className="ml-auto border-success/50 text-success"
+                  >
                     No Eve
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  Experience the BB84 protocol in ideal conditions. Watch Alice and Bob establish a secure shared key with minimal errors.
+                  Experience the BB84 protocol in ideal conditions. Watch Alice
+                  and Bob establish a secure shared key with minimal errors.
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• Low quantum bit error rate (QBER)</li>
                   <li>• Successful key establishment</li>
                   <li>• Demonstrates quantum security</li>
                 </ul>
-                <Button 
+                <Button
                   className="w-full group-hover:bg-success group-hover:text-success-foreground transition-colors"
                   onClick={() => onStartSimulation("without-eve")}
                 >
@@ -180,14 +189,15 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <p className="text-muted-foreground">
-                  See what happens when Eve tries to intercept the quantum communication. Quantum mechanics reveals her presence!
+                  See what happens when Eve tries to intercept the quantum
+                  communication. Quantum mechanics reveals her presence!
                 </p>
                 <ul className="text-sm text-muted-foreground space-y-1">
                   <li>• Increased quantum bit error rate</li>
                   <li>• Eavesdropping detection</li>
                   <li>• Protocol security demonstration</li>
                 </ul>
-                <Button 
+                <Button
                   variant="destructive"
                   className="w-full group-hover:bg-eve group-hover:text-eve-foreground transition-colors"
                   onClick={() => onStartSimulation("with-eve")}
@@ -201,25 +211,35 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
           </motion.div>
 
           {/* Key Concepts */}
-          <motion.div 
+          <motion.div
             className="text-center space-y-4 max-w-3xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9, duration: 0.8 }}
           >
-            <h3 className="text-xl font-semibold text-primary">Key Quantum Principles</h3>
+            <h3 className="text-xl font-semibold text-primary">
+              Key Quantum Principles
+            </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-muted-foreground">
               <div className="p-3 bg-muted/30 rounded-lg">
-                <strong className="text-foreground">No-Cloning Theorem:</strong> Quantum states cannot be perfectly copied
+                <strong className="text-foreground">No-Cloning Theorem:</strong>{" "}
+                Quantum states cannot be perfectly copied
               </div>
               <div className="p-3 bg-muted/30 rounded-lg">
-                <strong className="text-foreground">Measurement Disturbance:</strong> Observing a quantum state changes it
+                <strong className="text-foreground">
+                  Measurement Disturbance:
+                </strong>{" "}
+                Observing a quantum state changes it
               </div>
               <div className="p-3 bg-muted/30 rounded-lg">
-                <strong className="text-foreground">Basis Dependence:</strong> Measurement outcome depends on chosen basis
+                <strong className="text-foreground">Basis Dependence:</strong>{" "}
+                Measurement outcome depends on chosen basis
               </div>
               <div className="p-3 bg-muted/30 rounded-lg">
-                <strong className="text-foreground">Eavesdropping Detection:</strong> Interference increases error rates
+                <strong className="text-foreground">
+                  Eavesdropping Detection:
+                </strong>{" "}
+                Interference increases error rates
               </div>
             </div>
           </motion.div>
