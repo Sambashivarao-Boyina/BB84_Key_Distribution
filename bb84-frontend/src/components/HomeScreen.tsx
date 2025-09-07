@@ -62,7 +62,7 @@ export const HomeScreen = ({ onStartSimulation }: HomeScreenProps) => {
                     style={{ left: 0 }}
                     animate={{
                       x: [0, 32, 64, 96, 128],
-                      opacity: [0, 1, 1, 1, 1],
+                      opacity: [0, 1, 1, 1, 0],
                     }}
                     transition={{
                       duration: 2,
