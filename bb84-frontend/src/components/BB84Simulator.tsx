@@ -96,6 +96,25 @@ export const BB84Simulator = ({
   }, [state.totalRounds]);
 
   const onPrepareQubits = useCallback(async () => {
+    // Delay scroll until React updates the DOM
+    setTimeout(() => {
+      const element = simulationGridRef.current;
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        // Add offset after scrollIntoView
+        setTimeout(() => {
+          window.scrollBy({
+            top: -150, // negative value moves up by 100px
+            behavior: "smooth",
+          });
+        }, 300); // delay to let scrollIntoView finish
+      }
+    }, 100);
+
     try {
       setIsProcessing(true);
       await BB84Api.reset();
@@ -146,10 +165,21 @@ export const BB84Simulator = ({
 
     // Delay scroll until React updates the DOM
     setTimeout(() => {
-      simulationGridRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      const element = simulationGridRef.current;
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        // Add offset after scrollIntoView
+        setTimeout(() => {
+          window.scrollBy({
+            top: -150, // negative value moves up by 100px
+            behavior: "smooth",
+          });
+        }, 300); // delay to let scrollIntoView finish
+      }
     }, 100);
 
     try {
@@ -240,10 +270,21 @@ export const BB84Simulator = ({
   const onCompareBases = useCallback(async () => {
     // Delay scroll until React updates the DOM
     setTimeout(() => {
-      simulationGridRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+      const element = simulationGridRef.current;
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+
+        // Add offset after scrollIntoView
+        setTimeout(() => {
+          window.scrollBy({
+            top: -150, // negative value moves up by 100px
+            behavior: "smooth",
+          });
+        }, 300); // delay to let scrollIntoView finish
+      }
     }, 100);
     try {
       setIsProcessing(true);
@@ -280,6 +321,7 @@ export const BB84Simulator = ({
   }, [addMessage, toast]);
 
   const onGenerateKey = useCallback(async () => {
+    
     setTimeout(() => {
       keyResultsRef.current?.scrollIntoView({
         behavior: "smooth",
@@ -485,24 +527,6 @@ export const BB84Simulator = ({
             isProcessing={isProcessing}
           />
 
-          {state.step === "complete" && (
-            <div className="my-4">
-              <Button
-                variant="outline"
-                onClick={() => setShowCircuits(!showCircuits)}
-                className="mb-4"
-              >
-                {showCircuits ? "Hide Circuits" : "Show Circuits"}
-              </Button>
-
-              {showCircuits && (
-                <OverallCircuit eve={state.mode === "with-eve"} />
-              )}
-            </div>
-          )}
-          {/* {state.step === "complete" && (
-          <OverallCircuit eve={state.mode === "with-eve"} />
-        )} */}
           {/* <MultiQubitVisualizer
           index={state.currentRound - 1}
           totalRounds={state.totalRounds}
@@ -527,6 +551,22 @@ export const BB84Simulator = ({
               onToggle={() => setChatCollapsed(!chatCollapsed)}
             />
           </div>
+
+          {state.step === "complete" && (
+            <div className="my-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowCircuits(!showCircuits)}
+                className="mb-4"
+              >
+                {showCircuits ? "Hide Circuits" : "Show Circuits"}
+              </Button>
+
+              {showCircuits && (
+                <OverallCircuit eve={state.mode === "with-eve"} />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

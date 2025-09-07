@@ -177,6 +177,8 @@ export const ControlPanel = ({
             4. Generate Key
           </Button>
 
+         
+
           <Button
             onClick={onReset}
             disabled={isProcessing}

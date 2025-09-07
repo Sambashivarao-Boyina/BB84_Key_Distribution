@@ -40,7 +40,7 @@ export const EvePanel = ({
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       <Card className="glass border-eve/30 bg-eve/5">
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-eve">
             <Eye className="w-5 h-5" />
             Eve
@@ -49,6 +49,15 @@ export const EvePanel = ({
               Eavesdropper
             </Badge>
           </CardTitle>
+          <div className="text-xs text-muted-foreground">
+            <div>
+              Intercepted: {interceptedRounds.length}/{totalRounds} qubits
+            </div>
+            <div>Each interception introduces measurement disturbance</div>
+            <div className="text-eve/80">
+              Basis: + (rectilinear) × (diagonal)
+            </div>
+          </div>
         </CardHeader>
 
         <CardContent className="space-y-4">
@@ -95,8 +104,6 @@ export const EvePanel = ({
                   </span>
                 )}
 
-                
-
                 {index === currentRound && isActive && (
                   <motion.div
                     className="absolute inset-0 z-10 border border-eve rounded"
@@ -106,16 +113,6 @@ export const EvePanel = ({
                 )}
               </motion.div>
             ))}
-          </div>
-
-          <div className="text-xs text-muted-foreground">
-            <div>
-              Intercepted: {interceptedRounds.length}/{totalRounds} qubits
-            </div>
-            <div>Each interception introduces measurement disturbance</div>
-            <div className="mt-1 text-eve/80">
-              Basis: + (rectilinear) × (diagonal)
-            </div>
           </div>
 
           {isActive && (
