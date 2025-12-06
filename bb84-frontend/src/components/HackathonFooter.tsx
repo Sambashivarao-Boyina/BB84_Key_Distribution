@@ -37,7 +37,7 @@ export const HackathonFooter = () => {
             viewport={{ once: true }}
           >
             {/* Hackathon Logo/Icon */}
-            <div className="flex justify-center mb-4">
+            {/* <div className="flex justify-center mb-4">
               <div className="relative">
                 <img src={hacktonlog} className="h-36 w-36" />
               </div>
@@ -45,7 +45,7 @@ export const HackathonFooter = () => {
 
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               Amaravathi Quantum Valley Hackathon 2025
-            </h2>
+            </h2> */}
             
             <div className="flex items-center justify-center space-x-4 mb-4">
               <div className="h-px bg-primary/50 w-16"></div>
@@ -96,7 +96,7 @@ export const HackathonFooter = () => {
             viewport={{ once: true }}
             className="border-t border-border/50 pt-4 text-xs text-muted-foreground"
           >
-            <p>© 2025 AQV Hackathon - Quantum Key Distribution Simulator</p>
+            <p> - Quantum Key Distribution Simulator</p>
           </motion.div>
         </div>
       </div>
